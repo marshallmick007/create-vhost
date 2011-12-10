@@ -2,7 +2,7 @@
 
 # Author:       Marshall
 # Description:  Create Apache Virtual Hosts for MAMP
-# Homepage:     
+# Homepage:     https://github.com/marshallmick007/create-vhost 
 
 ## Used in echo -e statements
 E_PURPLE="\033[0;35m"
