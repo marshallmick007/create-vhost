@@ -10,8 +10,11 @@ Simple script to help create apache virtual hosts for the
 ## Configuration
 
 `APACHECONF` Set this to the path of your `httpd-vhosts.conf` file
+
 `LOGDIR` Set this to the location you want apache logs
+
 `VHOSTSDIR` Set this to the folder on your filesystem where you want new vhosts created
+
 
 ## What it does
 
