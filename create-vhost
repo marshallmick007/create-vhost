@@ -1,0 +1,63 @@
+#!/bin/bash
+
+# Author:       Marshall
+# Description:  Create Apache Virtual Hosts for MAMP
+# Homepage:     
+
+## Used in echo -e statements
+E_PURPLE="\033[0;35m"
+E_NC="\033[0m"
+E_RED="\033[1;31m"
+E_GREEN="\033[1;32m"
+E_YELLOW="\033[1;33m"
+
+# MAMP stuff
+APACHECONF="/Applications/MAMP/conf/apache/httpd-vhosts.conf"
+LOGDIR="/Applications/MAMP/logs"
+VHOSTSDIR="~/Sites/vhosts"
+
+
+if [ $# -lt 1 ] || [ $# -gt 2 ]; then
+  echo "Usage: create-vhost vhostname.tld"
+else
+  SITE=$1
+  if [ ! -d "${VHOSTSDIR}" ]; then
+    echo "VHOST directory ${VHOSTSDIR} does not exist, attempting to create it..."
+    mkdir "${VHOSTSDIR}"
+  fi
+  if [ -d "${VHOSTSDIR}" ]; then
+    vdir="$VHOSTSDIR/${SITE}"
+    echo -e "Creating vhost for domain ${E_GREEN}${SITE}${E_NC} at ${E_GREEN}${vdir}${E_NC}"
+
+    if [ ! -d "${vdir}" ]; then
+      mkdir "${vdir}"
+    else
+      echo -e "> ${E_YELLOW}Directory ${vdir} already exists${E_NC}"
+    fi
+    hfentry="127.0.0.1  ${SITE}"
+    hostfile=`cat /etc/hosts | grep -c ^"${hfentry}"`
+    if [ "0" = "${hostfile}" ]; then
+      sudo cp /etc/hosts /etc/hosts.bak
+      #echo -e "${hfentry}" >> /etc/hosts
+      cmd="echo '${hfentry}' >> /etc/hosts"
+      echo "${cmd}"
+      sudo sh -c "${cmd}"
+    else
+      echo -e "> ${E_YELLOW}hostfile entry '${hfentry}' already exists${E_NC}"
+    fi
+    apacheentry="ServerName ${SITE}"
+    apacheexists=`cat ${APACHECONF} | grep -c "${apacheentry}"`
+    if [ "0" = "${apacheexists}" ]; then
+      echo "<VirtualHost *>" >> $APACHECONF
+      echo -e "\tDocumentRoot \"${vdir}\"" >> $APACHECONF
+      echo -e "\tServerName ${SITE}" >> $APACHECONF
+      echo -e "\tErrorLog '${LOGDIR}/${SITE}-error_log'" >> $APACHECONF
+      echo -e "\tCustomLog '${LOGDIR}/${SITE}-access_log' common" >> $APACHECONF
+      echo '</VirtualHost>' >> $APACHECONF
+    else
+      echo -e "> ${E_YELLOW}httpd.conf vhost '${apacheentry}' already exists${E_NC}"
+    fi
+  else
+    echo -e "${E_RED}Unable to create VHOST directory ${VHOSTSDIR}${E_NC}"
+  fi
+fi
