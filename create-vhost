@@ -14,7 +14,7 @@ E_YELLOW="\033[1;33m"
 # MAMP stuff
 APACHECONF="/Applications/MAMP/conf/apache/httpd-vhosts.conf"
 LOGDIR="/Applications/MAMP/logs"
-VHOSTSDIR="~/Sites/vhosts"
+VHOSTSDIR="${HOME}/Sites/vhosts"
 
 
 if [ $# -lt 1 ] || [ $# -gt 2 ]; then
